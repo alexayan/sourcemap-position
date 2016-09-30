@@ -1,6 +1,6 @@
 {
   "name": "sourcemap-position",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "get origin position from a compressed file with line and column",
   "main": "index.js",
   "scripts": {
