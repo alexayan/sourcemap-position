@@ -10,8 +10,7 @@ function *getSourceMap(url){
 	var source = yield rp(url);
 	var mapUrl = findSourceMapUrl(source);
 	if(!mapUrl){
-		console.log('can find mapsource url');
-		return '';
+		mapUrl = url + '.map';
 	}
 	mapUrl = URL.resolve(url, mapUrl);
 	var map = yield rp(mapUrl);
