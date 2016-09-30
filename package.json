@@ -13,11 +13,12 @@
   "license": "MIT",
   "dependencies": {
     "co": "4.6.0",
-    "request": "2.75.0",
-    "request-promise": "4.1.1",
-    "source-map": "0.5.6"
+    "source-map": "0.5.6",
+    "xmlhttprequest": "1.8.0"
   },
-  "keywords": ["sourcemap"],
+  "keywords": [
+    "sourcemap"
+  ],
   "repository": {
     "type": "git",
     "url": "git@github.com:alexayan/sourcemap-position.git"

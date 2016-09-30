@@ -1,5 +1,7 @@
 var sourceMap = require('source-map');
-var rp = require('request-promise');
+if(!XMLHttpRequest){
+	var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+}
 var URL = require('url');
 var co = require('co');
 
@@ -14,6 +16,24 @@ function *getSourceMap(url){
 	mapUrl = URL.resolve(url, mapUrl);
 	var map = yield rp(mapUrl);
 	return map;
+}
+
+
+function rp(url){
+	return new Promise(function(resolve, reject){
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', url, true);
+		xhr.onreadystatechange = function(){
+			if(xhr.readyState === 4){
+				if(xhr.status === 200){
+					resolve(xhr.responseText);
+				}else{
+					reject(new Error('get ' + url + ' fail'));
+				}
+			}
+		};
+		xhr.send(null);
+	});
 }
 
 
