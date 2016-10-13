@@ -5,15 +5,20 @@ if(!XMLHttpRequest){
 var URL = require('url');
 var co = require('co');
 
+var sourcemap_temp = {};
 
 function *getSourceMap(url){
-	var source = yield rp(url);
-	var mapUrl = findSourceMapUrl(source);
-	if(!mapUrl){
-		mapUrl = url + '.map';
+	var map = sourcemap_temp[url];
+	if(!map){
+		var source = yield rp(url);
+		var mapUrl = findSourceMapUrl(source);
+		if(!mapUrl){
+			mapUrl = url + '.map';
+		}
+		mapUrl = URL.resolve(url, mapUrl);
+		var map = yield rp(mapUrl);
+		sourcemap_temp[url] = map;
 	}
-	mapUrl = URL.resolve(url, mapUrl);
-	var map = yield rp(mapUrl);
 	return map;
 }
 
@@ -48,14 +53,22 @@ function findSourceMapUrl(content){
 	return match[1];
 }
 
+var position_temp = {};
+
 function getOriginPosition(url, line, column){
+	var key = url + '$' + line + '$' + column;
+	if(position_temp[key]){
+		return Promise.resolve(position_temp[key]);
+	}
 	return co(getSourceMap(url)).then(function(map){
 		try{
 			var consumer = new sourceMap.SourceMapConsumer(map);
-			return consumer.originalPositionFor({
+			var rtn = consumer.originalPositionFor({
 				'line' : line,
 				'column' : column
 			});
+			position_temp[key] = rtn;
+			return rtn;
 		}catch(e){
 			return { source: null, line: null, column: null, name: null };
 		}
